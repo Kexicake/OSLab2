@@ -10,12 +10,12 @@ CC=gcc
 CFLAGS=-Wall
 
 clean:
-	rm -rf *.o
-	rm -rf fcfs
-	rm -rf sjf
-	rm -rf rr
-	rm -rf priority
-	rm -rf priority_rr
+	@rm -rf *.o
+	@rm -rf fcfs
+	@rm -rf sjf
+	@rm -rf rr
+	@rm -rf priority
+	@rm -rf priority_rr
 
 rr: driver.o list.o CPU.o schedule_rr.o
 	$(CC) $(CFLAGS) -o rr driver.o schedule_rr.o list.o CPU.o
@@ -52,3 +52,24 @@ list.o: list.c list.h
 
 CPU.o: CPU.c cpu.h
 	$(CC) $(CFLAGS) -c CPU.c
+
+run: rr priority_rr sjf fcfs priority
+	@echo fcfs
+	./fcfs schedule.txt
+	@echo
+	@echo sjf
+	./sjf schedule.txt
+	@echo
+	@echo priority
+	./priority schedule.txt
+	@echo
+	@echo rr
+	./rr schedule.txt
+	@echo
+	@echo priority_rr
+	./priority_rr schedule.txt
+	@$(MAKE) clean
+	
+	
+	
+
