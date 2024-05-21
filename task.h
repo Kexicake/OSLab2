@@ -5,7 +5,12 @@
 #ifndef TASK_H
 #define TASK_H
 
-// representation of a task
+typedef struct {
+    int turnaroundTime;
+    int waitingTime;
+    int responseTime;
+} Parameters;
+
 typedef struct task {
     char *name;
     int tid;
