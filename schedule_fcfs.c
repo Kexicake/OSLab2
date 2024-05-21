@@ -7,50 +7,62 @@
 #include "list.h"
 #include "cpu.h"
 
-
+// Указатель на начало списка задач
 struct node *head = NULL;
 
-void add(char *name,int priority,int burst){
+// Функция для добавления новой задачи в список
+void add(char *name, int priority, int burst) {
+    // Создание новой задачи и инициализация ее полей
     Task *task = malloc(sizeof(Task));
-    task->name=name;
+    task->name = name;
     task->priority = priority;
     task->burst = burst;
-    insert(&head,task);
+    
+    // Вставка задачи в список
+    insert(&head, task);
 }
 
-Task *pickNextTask(){
-    if(head!=NULL){
+// Функция для выбора следующей задачи для выполнения (FCFS - по порядку добавления)
+Task *pickNextTask() {
+    // Проверка, что список задач не пуст
+    if (head != NULL) {
         struct node *curr = head;
         struct node *prev = NULL;
 
-        while (curr->next!=NULL){
+        // Проход по списку к последнему элементу (так как задачи добавляются в начало списка)
+        while (curr->next != NULL) {
             prev = curr;
             curr = curr->next;
         }
-        Task * last = curr->task;
+        Task *last = curr->task;
 
-        if(prev!=NULL){
-            delete(&head,last);
-        } else{
-            delete(&head,head->task);
+        // Удаление выбранной задачи из списка
+        if (prev != NULL) {
+            delete(&head, last);
+        } else {
+            delete(&head, head->task);
         }
         return last;
-    }else{
+    } else {
+        // Если список пуст, возвращаем NULL
         return NULL;
     }
 }
 
-void schedule(Parameters *parameters){
-    Task *task = pickNextTask();
-    int currentTime = 0;
+// Функция планировщика задач
+void schedule(Parameters *parameters) {
+    Task *task = pickNextTask(); // Выбор первой задачи
+    int currentTime = 0; // Текущее время выполнения
+
+    // Цикл выполнения задач
     while (task != NULL) {
-        parameters->responseTime += currentTime; // время отклика
+        parameters->responseTime += currentTime; // Обновление времени отклика
 
-        run(task, task->burst);
+        run(task, task->burst); // Выполнение задачи
 
-        currentTime += task->burst;
-        parameters->turnaroundTime += currentTime; // Оборотное время
+        currentTime += task->burst; // Обновление текущего времени
+        parameters->turnaroundTime += currentTime; // Обновление оборотного времени
 
-        task = pickNextTask();
+        task = pickNextTask(); // Выбор следующей задачи
     }
 }
